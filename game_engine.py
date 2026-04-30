@@ -1,28 +1,35 @@
-# game_engine.py
-from pet import Pet
-from minigame import MiniGame
+import pygame
+from game_logic import Pet
+
 
 class GameEngine:
     def __init__(self, pet_name: str):
         self.pet = Pet(pet_name)
-        self.minigame = MiniGame()
 
-    def game_tick(self):
-        self.pet.tick()
+        pygame.init()
+        self.screen = pygame.display.set_mode((800, 600))
+        pygame.display.set_caption("Pet Name Display")
 
-    def feed_pet(self):
-        self.pet.feed()
+        self.clock = pygame.time.Clock()
+        self.running = True
 
-    def let_pet_sleep(self):
-        self.pet.sleep()
+        self.font = pygame.font.SysFont(None, 48)
 
-    def play_with_pet(self):
-        won = self.minigame.play()
-        self.pet.play(won)
-        print(f"Minigame gewonnen: {won}")
+    def render(self):
+        self.screen.fill((0, 0, 0))
 
-    def print_status(self):
-        print(self.pet)
+        text = self.font.render(self.pet.name, True, (255, 255, 255))
+        self.screen.blit(text, (20, 20))
 
-    def is_game_over(self) -> bool:
-        return not self.pet.alive
+        pygame.display.flip()
+
+    def run(self):
+        while self.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+
+            self.render()
+            self.clock.tick(60)
+
+        pygame.quit()

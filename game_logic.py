@@ -1,20 +1,33 @@
-# pet.py
 class Pet:
     def __init__(self, name: str):
         self.name = name
-        self.hunger = 20      # 0 = satt, 100 = verhungert
-        self.energy = 80      # 0 = erschöpft, 100 = voll
-        self.happiness = 80   # 0 = traurig, 100 = glücklich
+        self.hunger = 20
+        self.energy = 80
+        self.happiness = 80
         self.alive = True
+
+        self._tick_counter = 0
+        self._tick_rate = 30  # only apply effects every 30 calls
 
     # --- Zeitverlauf ---
     def tick(self):
         if not self.alive:
             return
 
-        self.hunger += 5
-        self.energy -= 5
-        self.happiness -= 3
+        # count every call
+        self._tick_counter += 1
+
+        # only apply effects sometimes
+        if self._tick_counter < self._tick_rate:
+            return
+
+        # reset counter
+        self._tick_counter = 0
+
+        # actual slow gameplay changes
+        self.hunger += 1
+        self.energy -= 1
+        self.happiness -= 0.5
 
         self._clamp()
         self._check_alive()
@@ -23,7 +36,7 @@ class Pet:
     def feed(self):
         if not self.alive:
             return
-        self.hunger -= 30
+        self.hunger -= 15
         self._clamp()
 
     def sleep(self):
@@ -36,14 +49,14 @@ class Pet:
             return
 
         if won:
-            self.happiness += 20
+            self.happiness += 10
         else:
-            self.happiness -= 5
+            self.happiness -= 2
 
-        self.energy -= 10
+        self.energy -= 5
         self._clamp()
 
-    # --- Hilfsmethoden ---
+    # --- helpers ---
     def _clamp(self):
         self.hunger = max(0, min(100, self.hunger))
         self.energy = max(0, min(100, self.energy))
@@ -54,5 +67,5 @@ class Pet:
             self.alive = False
 
     def __str__(self):
-        return (f"{self.name} | Hunger: {self.hunger} | Energie: {self.energy} "
-                f"| Glück: {self.happiness} | Lebendig: {self.alive}")
+        return (f"{self.name} | Hunger: {self.hunger} | Energy: {self.energy} "
+                f"| Happiness: {self.happiness} | Alive: {self.alive}")
