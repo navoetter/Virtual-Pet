@@ -27,7 +27,6 @@ class Pet:
         self._clamp()
         self._check_alive()
 
-    # --- Aktionen ---
     def feed(self):
         if not self.alive:
             return
