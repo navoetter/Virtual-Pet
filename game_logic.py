@@ -6,20 +6,10 @@ class Pet:
         self.happiness = 80
         self.alive = True
 
-        self._tick_counter = 0
-        self._tick_rate = 30  
 
     def tick(self):
         if not self.alive:
             return
-
-        self._tick_counter += 1
-
-        if self._tick_counter < self._tick_rate:
-            return
-
-        self._tick_counter = 0
-
         self.hunger += 1
         self.energy -= 1
         self.happiness -= 0.5
@@ -49,15 +39,6 @@ class Pet:
 
         self.energy -= 5
         self._clamp()
-
-    def _clamp(self):
-        self.hunger = max(0, min(100, self.hunger))
-        self.energy = max(0, min(100, self.energy))
-        self.happiness = max(0, min(100, self.happiness))
-
-    def _check_alive(self):
-        if self.hunger >= 100 or self.energy <= 0 or self.happiness <= 0:
-            self.alive = False
 
     def __str__(self):
         return (f"{self.name} | Hunger: {self.hunger} | Energy: {self.energy} "

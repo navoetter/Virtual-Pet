@@ -20,7 +20,7 @@ class GameEngine:
 
         self.button_rect = pygame.Rect(0, 0, 220, 60)
 
-        self.ltg_image = pygame.image.load("ltg.jpeg")
+        self.ltg_image = pygame.image.load("Slime.png")
         self.ltg_image = pygame.transform.scale(self.ltg_image, (300, 300))
 
     def play_minigame(self):
@@ -28,19 +28,22 @@ class GameEngine:
         self.pet.play(won)
 
     def render(self):
-        self.screen.fill((0, 0, 0))
+        self.screen.fill((255, 255, 255))
 
-        name_text = self.font.render(self.pet.name, True, (255, 255, 255))
+        name_text = self.font.render(self.pet.name, True, (0, 0, 0))
         self.screen.blit(name_text, (20, 20))
 
         image_rect = self.ltg_image.get_rect()
-        image_rect.center = (1200// 2, 750 // 2 - 80)
+        image_rect.center = (1200 // 2, 750 // 2 - 80)
         self.screen.blit(self.ltg_image, image_rect)
 
+        # Button
         self.button_rect.center = (1200 // 2, image_rect.bottom + 60)
-        pygame.draw.rect(self.screen, (0, 120, 200), self.button_rect)
+        pygame.draw.rect(self.screen, (200, 200, 200), self.button_rect)
+        
+        
 
-        btn_text = self.button_font.render("Play Minigame", True, (255, 255, 255))
+        btn_text = self.button_font.render("Play Minigame", True, (0, 0, 0))
         text_rect = btn_text.get_rect(center=self.button_rect.center)
         self.screen.blit(btn_text, text_rect)
 
