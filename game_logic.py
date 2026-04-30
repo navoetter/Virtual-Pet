@@ -7,24 +7,19 @@ class Pet:
         self.alive = True
 
         self._tick_counter = 0
-        self._tick_rate = 30  # only apply effects every 30 calls
+        self._tick_rate = 30  
 
-    # --- Zeitverlauf ---
     def tick(self):
         if not self.alive:
             return
 
-        # count every call
         self._tick_counter += 1
 
-        # only apply effects sometimes
         if self._tick_counter < self._tick_rate:
             return
 
-        # reset counter
         self._tick_counter = 0
 
-        # actual slow gameplay changes
         self.hunger += 1
         self.energy -= 1
         self.happiness -= 0.5
@@ -56,7 +51,6 @@ class Pet:
         self.energy -= 5
         self._clamp()
 
-    # --- helpers ---
     def _clamp(self):
         self.hunger = max(0, min(100, self.hunger))
         self.energy = max(0, min(100, self.energy))
