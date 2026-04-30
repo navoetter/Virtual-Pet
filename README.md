@@ -7,9 +7,9 @@ Das Spiel ist eine Lebenssimulation eines digitalen Haustiers. Das Ziel ist es, 
 
 #### 1. Die Bedürfnisse (Stats)
 Dein Haustier wird über drei Hauptwerte definiert, die ständig sinken:
-*   **Hunger:** Sinkt dieser Wert auf Null, wird das Haustier krank oder das Spiel endet.
-*   **Energie:** Dein Pet wird müde. Wenn es zu müde ist, kann es keine Minigames mehr spielen.
-*   **Glück:** Durch Spielen steigerst du diesen Wert. Ein unglückliches Haustier verweigert irgendwann den Gehorsam.
+*   **Hunger** 
+*   **Energie** 
+*   **Glück** 
 
 #### 2. Kern-Interaktionen
 Du steuerst das Spiel über eine grafische Benutzeroberfläche (GUI) mit folgenden Aktionen:
