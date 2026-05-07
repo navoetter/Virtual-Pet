@@ -6,14 +6,12 @@ class Pet:
         self.happiness = 80
         self.alive = True
 
-
     def tick(self):
         if not self.alive:
             return
         self.hunger += 1
         self.energy -= 1
         self.happiness -= 0.5
-
         self._clamp()
         self._check_alive()
 
@@ -43,3 +41,7 @@ class Pet:
     def __str__(self):
         return (f"{self.name} | Hunger: {self.hunger} | Energy: {self.energy} "
                 f"| Happiness: {self.happiness} | Alive: {self.alive}")
+    def _clamp(self):
+        self.hunger = max(0, min(100, self.hunger))
+        self.energy = max(0, min(100, self.energy))
+        self.happiness = max(0, min(100, self.happiness))
