@@ -10,37 +10,63 @@ class GameEngine:
         self.minigame = MiniGame()
 
         pygame.init()
-        self.screen = pygame.display.set_mode((1920, 1080))
-        pygame.display.set_caption("Pet Game")
+
+        # Window
+        self.screen = pygame.display.set_mode((1200, 750))
+        pygame.display.set_caption("Virtual Pet")
 
         self.clock = pygame.time.Clock()
         self.running = True
 
+        # Fonts
         self.font = pygame.font.SysFont(None, 48)
+        self.small_font = pygame.font.SysFont(None, 32)
 
+        # Screen size
         self.width, self.height = self.screen.get_size()
 
         # -------------------------
-        # PATH SETUP
+        # PATHS
         # -------------------------
         BASE_DIR = os.path.dirname(__file__)
         TEXTURE_PATH = os.path.join(BASE_DIR, "textures")
 
         # -------------------------
-        # ICONS (LEFT SIDE) - NO SCALING
+        # BUTTON SETTINGS
         # -------------------------
-        self.icon_hunger = pygame.image.load(os.path.join(TEXTURE_PATH, "icon_hunger.png"))
-        self.icon_life = pygame.image.load(os.path.join(TEXTURE_PATH, "icon_life.png"))
-        self.icon_sleep = pygame.image.load(os.path.join(TEXTURE_PATH, "icon_sleep.png"))
+        self.button_size = (220 , 80)
 
-        # -------------------------
-        # BUTTONS (RIGHT SIDE) - NO SCALING
-        # -------------------------
-        self.button_feed = pygame.image.load(os.path.join(TEXTURE_PATH, "button_feed.png"))
-        self.button_play = pygame.image.load(os.path.join(TEXTURE_PATH, "button_play.png"))
-        self.button_sleep = pygame.image.load(os.path.join(TEXTURE_PATH, "button_sleep.png"))
+        # Feed Button
+        self.button_feed = pygame.image.load(
+            os.path.join(TEXTURE_PATH, "button_feed.png")
+        ).convert_alpha()
 
-        # Button rects (for clicking)
+        self.button_feed = pygame.transform.scale(
+            self.button_feed,
+            (130,90)
+        )
+
+        # Play Button
+        self.button_play = pygame.image.load(
+            os.path.join(TEXTURE_PATH, "button_play.png")
+        ).convert_alpha()
+
+        self.button_play = pygame.transform.scale(
+            self.button_play,
+            (160,70)
+        )
+
+        # Sleep Button
+        self.button_sleep = pygame.image.load(
+            os.path.join(TEXTURE_PATH, "button_sleep.png")
+        ).convert_alpha()
+
+        self.button_sleep = pygame.transform.scale(
+            self.button_sleep,
+            (140,90)
+        )
+
+        # Button rects
         self.feed_rect = self.button_feed.get_rect()
         self.play_rect = self.button_play.get_rect()
         self.sleep_rect = self.button_sleep.get_rect()
@@ -48,16 +74,27 @@ class GameEngine:
         # -------------------------
         # PET IMAGE
         # -------------------------
-        self.pet_image = pygame.image.load(os.path.join("Slime.png"))
+        self.pet_image = pygame.image.load(
+            os.path.join(TEXTURE_PATH, "Slime.png")
+        ).convert_alpha()
 
-    # -------------------------
-    # GAME ACTIONS
-    # -------------------------
+        self.pet_image = pygame.transform.scale(
+            self.pet_image,
+            (300, 300)
+        )
+
+    # -------------------------------------------------
+    # MINIGAME
+    # -------------------------------------------------
     def play_minigame(self):
         won = self.minigame.play()
         self.pet.play(won)
 
+    # -------------------------------------------------
+    # BUTTON HANDLING
+    # -------------------------------------------------
     def handle_buttons(self, pos):
+
         if self.feed_rect.collidepoint(pos):
             self.pet.feed()
 
@@ -67,62 +104,158 @@ class GameEngine:
         elif self.sleep_rect.collidepoint(pos):
             self.pet.sleep()
 
-    # -------------------------
-    # DRAWING
-    # -------------------------
+    # -------------------------------------------------
+    # STATUS BARS
+    # -------------------------------------------------
+    def draw_status_bar(self, x, y, value, max_value, color, label):
+
+        label_text = self.small_font.render(
+            f"{label}: {int(value)}",
+            True,
+            (0, 0, 0)
+        )
+
+        self.screen.blit(label_text, (x, y - 30))
+
+        # Background
+        pygame.draw.rect(
+            self.screen,
+            (200, 200, 200),
+            (x, y, 250, 25)
+        )
+
+        # Filled part
+        fill_width = int((value / max_value) * 250)
+
+        pygame.draw.rect(
+            self.screen,
+            color,
+            (x, y, fill_width, 25)
+        )
+
+        # Border
+        pygame.draw.rect(
+            self.screen,
+            (0, 0, 0),
+            (x, y, 250, 25),
+            2
+        )
+
+    # -------------------------------------------------
+    # RENDER
+    # -------------------------------------------------
     def render(self):
+
         self.screen.fill((255, 255, 255))
 
-        # Pet name
-        name_text = self.font.render(self.pet.name, True, (0, 0, 0))
-        self.screen.blit(name_text, (20, 20))
+        # -------------------------
+        # PET NAME
+        # -------------------------
+        name_text = self.font.render(
+            self.pet.name,
+            True,
+            (0, 0, 0)
+        )
 
-        # Pet center image
+        self.screen.blit(name_text, (30, 20))
+
+        # -------------------------
+        # STATUS BARS
+        # -------------------------
+        self.draw_status_bar(
+            50,
+            120,
+            self.pet.hunger,
+            100,
+            (255, 100, 100),
+            "Hunger"
+        )
+
+        self.draw_status_bar(
+            50,
+            190,
+            self.pet.energy,
+            100,
+            (100, 100, 255),
+            "Energy"
+        )
+
+        self.draw_status_bar(
+            50,
+            260,
+            self.pet.happiness,
+            100,
+            (100, 255, 100),
+            "Happiness"
+        )
+
+        # -------------------------
+        # PET IMAGE CENTER
+        # -------------------------
         pet_rect = self.pet_image.get_rect(
             center=(self.width // 2, self.height // 2 - 50)
         )
+
         self.screen.blit(self.pet_image, pet_rect)
 
         # -------------------------
-        # LEFT ICONS (FIXED ALIGNMENT)
+        # BUTTON POSITIONS
         # -------------------------
-        left_x = 60
-        spacing = 150
+        right_x = 900
         start_y = 250
+        spacing = 110
 
-        self.screen.blit(self.icon_hunger, (left_x, start_y))
-        self.screen.blit(self.icon_life, (left_x, start_y + spacing))
-        self.screen.blit(self.icon_sleep, (left_x, start_y + spacing * 2))
+        self.feed_rect.topleft = (right_x, start_y)
+        self.play_rect.topleft = (right_x, start_y + spacing)
+        self.sleep_rect.topleft = (right_x, start_y + spacing * 2)
 
         # -------------------------
-        # RIGHT BUTTONS (FIXED ALIGNMENT)
+        # DRAW BUTTONS
         # -------------------------
-        right_x = self.width - 300
-        center_y = self.height // 2
-
-        self.feed_rect.topleft = (right_x, center_y - 120)
-        self.play_rect.topleft = (right_x, center_y)
-        self.sleep_rect.topleft = (right_x, center_y + 120)
-
         self.screen.blit(self.button_feed, self.feed_rect)
         self.screen.blit(self.button_play, self.play_rect)
         self.screen.blit(self.button_sleep, self.sleep_rect)
 
+        # -------------------------
+        # DEAD MESSAGE
+        # -------------------------
+        if not self.pet.alive:
+
+            dead_text = self.font.render(
+                "Your pet died!",
+                True,
+                (255, 0, 0)
+            )
+
+            dead_rect = dead_text.get_rect(
+                center=(self.width // 2, 50)
+            )
+
+            self.screen.blit(dead_text, dead_rect)
+
         pygame.display.flip()
 
-    # -------------------------
+    # -------------------------------------------------
     # MAIN LOOP
-    # -------------------------
+    # -------------------------------------------------
     def run(self):
+
         while self.running:
+
             for event in pygame.event.get():
+
                 if event.type == pygame.QUIT:
                     self.running = False
 
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    self.handle_buttons(event.pos)
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+
+                    if event.button == 1:
+                        self.handle_buttons(event.pos)
+
+            self.pet.tick()
 
             self.render()
+
             self.clock.tick(60)
 
         pygame.quit()

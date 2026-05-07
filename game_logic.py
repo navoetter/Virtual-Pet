@@ -45,3 +45,12 @@ class Pet:
         self.hunger = max(0, min(100, self.hunger))
         self.energy = max(0, min(100, self.energy))
         self.happiness = max(0, min(100, self.happiness))
+
+    def _check_alive(self):
+
+        if (
+            self.hunger >= 100 or
+            self.energy <= 0 or
+            self.happiness <= 0
+        ):
+            self.alive = False
