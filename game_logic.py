@@ -1,56 +1,56 @@
+import time
+
+
 class Pet:
-    def __init__(self, name: str):
+    def __init__(self, name):
         self.name = name
-        self.hunger = 20
-        self.energy = 80
-        self.happiness = 80
+
+        self.hunger = 50
+        self.energy = 100
+        self.happiness = 100
+
         self.alive = True
 
-    def tick(self):
-        if not self.alive:
-            return
-        self.hunger += 0.3
-        self.energy -= 0.5
-        self.happiness -= 0.4
-        self._clamp()
-        self._check_alive()
+        self.sleeping = False
 
     def feed(self):
-        if not self.alive:
+        if self.sleeping:
             return
-        self.hunger -= 15
-        self._clamp()
+        self.hunger -= 10
+        self.happiness += 2
+
+    def play(self, score):
+        if self.sleeping:
+            return
+        self.happiness += score * 2
+        self.energy -= 5
 
     def sleep(self):
+        self.sleeping = True
+
+    def tick(self):
+
         if not self.alive:
             return
-        self.energy = 100
 
-    def play(self, won: bool):
-        if not self.alive:
+        # 💤 SLEEP MODE
+        if self.sleeping:
+            self.energy += 3
+
+            if self.energy >= 100:
+                self.energy = 100
+                self.sleeping = False
+
             return
 
-        if won:
-            self.happiness += 10
-        else:
-            self.happiness -= 2
+        # NORMAL MODE
+        self.hunger += 1
+        self.energy -= 1
+        self.happiness -= 0.5
 
-        self.energy -= 5
-        self._clamp()
+        self.hunger = min(self.hunger, 100)
+        self.energy = max(self.energy, 0)
+        self.happiness = max(self.happiness, 0)
 
-    def __str__(self):
-        return (f"{self.name} | Hunger: {self.hunger} | Energy: {self.energy} "
-                f"| Happiness: {self.happiness} | Alive: {self.alive}")
-    def _clamp(self):
-        self.hunger = max(0, min(100, self.hunger))
-        self.energy = max(0, min(100, self.energy))
-        self.happiness = max(0, min(100, self.happiness))
-
-    def _check_alive(self):
-
-        if (
-            self.hunger >= 100 or
-            self.energy <= 0 or
-            self.happiness <= 0
-        ):
+        if self.hunger >= 100 or self.energy <= 0:
             self.alive = False
