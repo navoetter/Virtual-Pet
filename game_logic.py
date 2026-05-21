@@ -9,9 +9,9 @@ class Pet:
     def tick(self):
         if not self.alive:
             return
-        self.hunger += 1
-        self.energy -= 1
-        self.happiness -= 0.5
+        self.hunger += 0.1
+        self.energy -= 0.03
+        self.happiness -= 0.02
         self._clamp()
         self._check_alive()
 
