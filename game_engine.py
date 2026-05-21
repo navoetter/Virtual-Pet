@@ -57,12 +57,10 @@ class GameEngine:
 
         self.pet_image = pygame.transform.scale(self.pet_image, (300, 300))
 
-    # -------------------------
     def play_minigame(self):
         score = self.minigame.play(self.screen)
         self.pet.play(score)
 
-    # -------------------------
     def handle_buttons(self, pos):
 
         if self.pet.sleeping:
@@ -77,7 +75,6 @@ class GameEngine:
         elif self.sleep_rect.collidepoint(pos):
             self.pet.sleep()
 
-    # -------------------------
     def draw_status_bar(self, x, y, value, max_value, color, label):
 
         label_text = self.small_font.render(
@@ -94,7 +91,6 @@ class GameEngine:
 
         pygame.draw.rect(self.screen, (0, 0, 0), (x, y, 250, 25), 2)
 
-    # -------------------------
     def render(self):
 
         self.screen.fill((20, 60, 20))
@@ -113,7 +109,7 @@ class GameEngine:
         name_text = self.font.render(self.pet.name, True, (0, 0, 0))
         self.screen.blit(name_text, (30, 20))
 
-        self.draw_status_bar(50, 120, self.pet.hunger, 100, (255, 100, 100), "Sattheit")
+        self.draw_status_bar(50, 120, self.pet.hunger, 100, (255, 100, 100), "Fullness")
         self.draw_status_bar(50, 190, self.pet.energy, 100, (100, 100, 255), "Energy")
         self.draw_status_bar(50, 260, self.pet.happiness, 100, (100, 255, 100), "Happiness")
 
@@ -122,7 +118,7 @@ class GameEngine:
         )
         self.screen.blit(self.pet_image, pet_rect)
 
-        # BUTTON POSITION (DEIN STYLE)
+        # BUTTON POSITION 
         spacing = 30
         start_x = self.width // 2 - 300
         button_y = 520
@@ -141,7 +137,7 @@ class GameEngine:
             dead_rect = dead_text.get_rect(center=(self.width // 2, 50))
             self.screen.blit(dead_text, dead_rect)
 
-        # 💤 SLEEP UI
+        # SLEEP UI
         if self.pet.sleeping:
 
             overlay = pygame.Surface((self.width, self.height))
@@ -167,7 +163,6 @@ class GameEngine:
 
         pygame.display.flip()
 
-    # -------------------------
     def run(self):
 
         while self.running:

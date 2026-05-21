@@ -33,7 +33,7 @@ class Pet:
         if not self.alive:
             return
 
-        # 💤 SLEEP MODE
+        # SLEEP MODE
         if self.sleeping:
             self.energy += 3
 
