@@ -22,11 +22,14 @@ class GameEngine:
         self.small_font = pygame.font.SysFont(None, 32)
 
         self.width, self.height = self.screen.get_size()
-
         self.border = 20
 
         self.tick_timer = 0
         self.tick_delay = 1000
+
+        self.level = 1
+        self.level_timer = 0
+        self.level_interval = 60000
 
         BASE_DIR = os.path.dirname(__file__)
         TEXTURE_PATH = os.path.join(BASE_DIR, "textures")
@@ -62,20 +65,19 @@ class GameEngine:
         self.pet.play(score)
 
     def handle_buttons(self, pos):
-
         if self.pet.sleeping:
             return
 
         if self.feed_rect.collidepoint(pos):
             self.pet.feed()
-
         elif self.play_rect.collidepoint(pos):
             self.play_minigame()
-
         elif self.sleep_rect.collidepoint(pos):
             self.pet.sleep()
 
     def draw_status_bar(self, x, y, value, max_value, color, label):
+
+        value = max(0, min(value, max_value))
 
         label_text = self.small_font.render(
             f"{label}: {int(value)}",
@@ -84,12 +86,16 @@ class GameEngine:
         )
         self.screen.blit(label_text, (x, y - 30))
 
-        pygame.draw.rect(self.screen, (200, 200, 200), (x, y, 250, 25))
+        bar_width = 250
 
-        fill_width = int((value / max_value) * 250)
+        pygame.draw.rect(self.screen, (200, 200, 200), (x, y, bar_width, 25))
+
+        fill_width = int((value / max_value) * bar_width)
+        fill_width = max(0, min(fill_width, bar_width))
+
         pygame.draw.rect(self.screen, color, (x, y, fill_width, 25))
 
-        pygame.draw.rect(self.screen, (0, 0, 0), (x, y, 250, 25), 2)
+        pygame.draw.rect(self.screen, (0, 0, 0), (x, y, bar_width, 25), 2)
 
     def render(self):
 
@@ -98,12 +104,9 @@ class GameEngine:
         pygame.draw.rect(
             self.screen,
             (255, 255, 255),
-            (
-                self.border,
-                self.border,
-                self.width - self.border * 2,
-                self.height - self.border * 2
-            )
+            (self.border, self.border,
+             self.width - self.border * 2,
+             self.height - self.border * 2)
         )
 
         name_text = self.font.render(self.pet.name, True, (0, 0, 0))
@@ -118,8 +121,6 @@ class GameEngine:
         )
         self.screen.blit(self.pet_image, pet_rect)
 
-        # BUTTON POSITION 
-        spacing = 30
         start_x = self.width // 2 - 300
         button_y = 520
 
@@ -131,35 +132,31 @@ class GameEngine:
         self.screen.blit(self.button_play, self.play_rect)
         self.screen.blit(self.button_sleep, self.sleep_rect)
 
-        # DEAD
+        # LEVEL DISPLAY
+        level_text = self.small_font.render(
+            f"Level {self.level}",
+            True,
+            (0, 0, 0)
+        )
+
+        text_x = self.border + 10
+        text_y = self.height - self.border - level_text.get_height() - 5
+
+        self.screen.blit(level_text, (text_x, text_y))
+
         if not self.pet.alive:
             dead_text = self.font.render("Your pet died!", True, (255, 0, 0))
             dead_rect = dead_text.get_rect(center=(self.width // 2, 50))
             self.screen.blit(dead_text, dead_rect)
 
-        # SLEEP UI
         if self.pet.sleeping:
-
             overlay = pygame.Surface((self.width, self.height))
             overlay.set_alpha(140)
             overlay.fill((0, 0, 0))
             self.screen.blit(overlay, (0, 0))
 
             zzz = self.font.render("Zzz...", True, (255, 255, 255))
-            self.screen.blit(
-                zzz,
-                (self.width // 2 - zzz.get_width() // 2, 100)
-            )
-
-            info = self.small_font.render(
-                "Sleeping until energy is full",
-                True,
-                (200, 200, 200)
-            )
-            self.screen.blit(
-                info,
-                (self.width // 2 - info.get_width() // 2, 160)
-            )
+            self.screen.blit(zzz, (self.width // 2 - 50, 100))
 
         pygame.display.flip()
 
@@ -169,11 +166,15 @@ class GameEngine:
 
             dt = self.clock.tick(60)
             self.tick_timer += dt
+            self.level_timer += dt
+
+            if self.level_timer >= self.level_interval:
+                self.level += 1
+                self.level_timer = 0
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         self.handle_buttons(event.pos)
