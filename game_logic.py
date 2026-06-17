@@ -1,3 +1,18 @@
+import os
+import pygame
+
+BASE_DIR = os.path.dirname(__file__)
+RESOURCE_PATH = os.path.join(BASE_DIR, "resources")
+
+def _play_sound(filename):
+    if not pygame.mixer.get_init():
+        pygame.mixer.init()
+    path = os.path.join(RESOURCE_PATH, filename)
+    try:
+        sound = pygame.mixer.Sound(path)
+        sound.play()
+    except Exception:
+        pass  
 class Pet:
     def __init__(self, name):
         self.name = name
@@ -35,36 +50,36 @@ class Pet:
             return
         self.hunger += 10
         self.happiness += 2
+        _play_sound("sound_food.wav")
 
     def play(self, score):
         if self.sleeping or not self.alive:
             return
         self.happiness += score * 2
         self.energy -= 5
+        _play_sound("sound_play.wav")
 
     def sleep(self):
         if not self.alive:
             return
         self.sleeping = True
+        _play_sound("sound_sleep.wav")
 
     def tick(self):
         if not self.alive:
             return
-
         if self.sleeping:
             self.energy += 3
             if self.energy >= 100:
                 self.energy = 100
                 self.sleeping = False
             return
-
         self.hunger -= 1
         self.energy -= 1
         self.happiness -= 0.5
-
         self.hunger = max(0, min(self.hunger, 100))
         self.energy = max(0, min(self.energy, 100))
         self.happiness = max(0, min(self.happiness, 100))
-
         if self.hunger <= 0 or self.energy <= 0:
-            self.alive = False
+            _play_sound("sound_death.wav")
+            self.alive = False 

@@ -17,7 +17,6 @@ def start_screen():
     input_text = ""
 
     while True:
-        # 🖥️ WHITE BACKGROUND
         screen.fill((255, 255, 255))
 
         # Titel
@@ -32,7 +31,6 @@ def start_screen():
         text_surface = small_font.render(input_text, True, (0, 0, 0))
         screen.blit(text_surface, (box_rect.x + 10, box_rect.y + 15))
 
-        # Hint
         hint = small_font.render("Press ENTER to start", True, (120, 120, 120))
         screen.blit(hint, (WIDTH // 2 - hint.get_width() // 2, 320))
 
@@ -54,4 +52,4 @@ def start_screen():
                         input_text += event.unicode
 
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(60) 
